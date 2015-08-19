@@ -1,0 +1,27 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>hoge hoge</title>
+</head>
+<body>
+  <ul id="msg_list"></ul>
+  <form action="" method="post" onsubmit="return false;">
+    <input type="text" class="text" id="message" />
+    <input type="submit" class="button" id="send" value="送信" />
+  </form>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io.connect('http://localhost:3000');
+    socket.on("sendMessageToClient", function(data) {
+      $("#msg_list").prepend("<li>" + data.value + "</li>");
+    });
+
+    $("input#send").click(function() {
+      var msg = $("#message").val();
+      $("#message").val("");
+      socket.emit("sendMessageToServer", {value:msg});
+    });
+  </script>
+</body>
+</html>
