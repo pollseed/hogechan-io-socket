@@ -1,16 +1,3 @@
-// var http = require('http'),
-//     socketIo = require('socket.io'),
-//     express = require('express'),
-//     app = express(),
-//     server = http.createServer(app);
-//
-// app.get('/', function(req, res) {
-//   res.send('Hello, world');
-// });
-//
-// app.listen(3000);
-// console.log(server);
-
 var http = require('http'),
     express = require('express'),
     socketIo = require('socket.io'),
