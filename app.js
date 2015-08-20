@@ -21,10 +21,8 @@ app.get('/', function(req,res) {
 io.on('connection', function(socket) {
   socket.broadcast.emit("sendMessageToClient", {value: "1人入室しました。"});
   socket.on("sendMessageToServer", function(data) {
-    // 自分に表示する
-    socket.emit("sendMessageToClient", {value:data.value});
-    // 部屋の人全員に表示する
-    socket.broadcast.emit("sendMessageToClient", {value:data.value});
+    socket.emit("sendMessageToClient", {name:data.name, value:data.value});
+    socket.broadcast.emit("sendMessageToClient", {name:data.name, value:data.value});
   });
   socket.on("disconnect", function() {
     socket.broadcast.emit("sendMessageToClient", {value: "1人退室しました。"});

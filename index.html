@@ -6,6 +6,7 @@
 <body>
   <ul id="msg_list"></ul>
   <form action="" method="post" onsubmit="return false;">
+    <input type="text" class="text" id="name" />
     <input type="text" class="text" id="message" />
     <input type="submit" class="button" id="send" value="送信" />
   </form>
@@ -14,13 +15,14 @@
   <script>
     var socket = io.connect('http://localhost:3000');
     socket.on("sendMessageToClient", function(data) {
-      $("#msg_list").prepend("<li>" + data.value + "</li>");
+      $("#msg_list").prepend("<li>[" + data.name + "]" + data.value + "</li>");
     });
 
     $("input#send").click(function() {
+      var name = $("#name").val();
       var msg = $("#message").val();
       $("#message").val("");
-      socket.emit("sendMessageToServer", {value:msg});
+      socket.emit("sendMessageToServer", {name:name,value:msg});
     });
   </script>
 </body>
