@@ -19,12 +19,16 @@ app.get('/', function(req,res) {
 });
 
 io.on('connection', function(socket) {
-  socket.broadcast.emit("sendMessageToClient", {value: "1人入室しました。"});
+  socket.broadcast.emit("sendMessageToClient", {value:"1人入室しました。"});
   socket.on("sendMessageToServer", function(data) {
-    socket.emit("sendMessageToClient", {name:data.name, value:data.value});
-    socket.broadcast.emit("sendMessageToClient", {name:data.name, value:data.value});
+    socket.join(data.room);
+    socket.emit("sendMessageToClientRoom", {value:data.room + "に入室中"});
+    // socket.emit("sendMessageToClient", {name:data.name, value:data.value});
+    socket.broadcast.to(data.room).emit("sendMessageToClient", {
+      value:"[" + data.name + "]" + data.value,room:data.room
+    });
   });
   socket.on("disconnect", function() {
-    socket.broadcast.emit("sendMessageToClient", {value: "1人退室しました。"});
+    socket.broadcast.emit("sendMessageToClient", {value:"1人退室しました。"});
   });
 });

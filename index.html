@@ -4,8 +4,15 @@
   <title>hoge hoge</title>
 </head>
 <body>
+  <h1 id="room_h1"></h1>
   <ul id="msg_list"></ul>
   <form action="" method="post" onsubmit="return false;">
+    <select id="rooms">
+      <option value="room1">緑の部屋</option>
+      <option value="room2">赤の部屋</option>
+      <option value="room3">黒の部屋</option>
+      <option value="room4">白の部屋</option>
+    </select>
     <input type="text" class="text" id="name" />
     <input type="text" class="text" id="message" />
     <input type="submit" class="button" id="send" value="送信" />
@@ -15,14 +22,19 @@
   <script>
     var socket = io.connect('http://localhost:3000');
     socket.on("sendMessageToClient", function(data) {
-      $("#msg_list").prepend("<li>[" + data.name + "]" + data.value + "</li>");
+      $("#msg_list").append($("<li>").text(data.value));
+    });
+
+    socket.on("sendMessageToClientRoom", function(data) {
+      $("#room_h1").text("[" + data.value + "]");
     });
 
     $("input#send").click(function() {
       var name = $("#name").val();
       var msg = $("#message").val();
+      var room = $("#rooms").val();
       $("#message").val("");
-      socket.emit("sendMessageToServer", {name:name,value:msg});
+      socket.emit("sendMessageToServer", {name:name,value:msg,room:room});
     });
   </script>
 </body>
