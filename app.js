@@ -3,7 +3,9 @@ var http = require('http'),
     socketIo = require('socket.io'),
     app = express(),
     crypto = require('crypto'),
-    fs = require('fs');
+    fs = require('fs'),
+    crypto_key = 'sha1',
+    digest_key = 'base64';
 app.use(function(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -23,22 +25,21 @@ app.get('/', function(req,res) {
 io.on('connection', function(socket) {
   socket.broadcast.emit("sendMessageToClient", {value:"1人入室しました。"});
   socket.on("sendMessageToServer", function(data) {
-    var hash = crypto.createHash('sha1').update(socket.id).digest('base64');
+    data.hash = crypto.createHash(crypto_key).update(socket.id).digest(digest_key);
     socket.join(data.room);
-    socket.emit("sendMessageToClientRoom", {
-      value:"[" + data.name + "]" + data.value,
-      hash:hash,
-      name:data.name,
-      room:data.room
-      });
-    socket.broadcast.to(data.room).emit("sendMessageToClient", {
-      value:"[" + data.name + "]" + data.value,
-      hash:hash,
-      name:data.name,
-      room:data.room
-    });
+    socket.emit("sendMessageToClientRoom", createClientMessage(data));
+    socket.broadcast.to(data.room).emit("sendMessageToClient", createClientMessage(data));
   });
   socket.on("disconnect", function() {
     socket.broadcast.emit("sendMessageToClient", {value:"1人退室しました。"});
   });
 });
+
+function createClientMessage(data) {
+  return {
+      value:"[" + data.name + "]" + data.value,
+      hash:data.hash,
+      name:data.name,
+      room:data.room
+  };
+}
