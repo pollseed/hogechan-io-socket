@@ -26,10 +26,16 @@ app.use(express.static('public'));
 io.on('connection', function(socket) {
   socket.broadcast.emit("sendMessageToClient", {value:"1人入室しました。"});
   socket.on("sendMessageToServer", function(data) {
+    console.log("b_room:" + data.b_room);
+    console.log("room:" + data.room);
+    if (data.b_room != data.room) {
+      socket.leave(data.b_room);
+    }
     data.hash = crypto.createHash(crypto_key).update(socket.id).digest(digest_key);
     socket.join(data.room);
     socket.emit("sendMessageToClientRoom", createClientMessage(data));
-    socket.broadcast.to(data.room).emit("sendMessageToClient", createClientMessage(data));
+    // socket.broadcast.to(data.room).emit("sendMessageToClient", createClientMessage(data));
+    socket.to(data.room).emit("sendMessageToClient", createClientMessage(data));
   });
   socket.on("disconnect", function() {
     socket.broadcast.emit("sendMessageToClient", {value:"1人退室しました。"});

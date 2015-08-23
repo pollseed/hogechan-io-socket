@@ -4,14 +4,19 @@ socket.on("sendMessageToClient", function(data) {
 });
 
 socket.on("sendMessageToClientRoom", function(data) {
+  var room = document.getElementById("room_h1").innerHTML;
+  if (room == "" || room != data.room[0]) {
+    appendTag($("#msg_list"), "li", data.name + "が" + data.room + "に入室しました");
+  }
   appendMsgList(data);
-  $("#room_h1").text("[" + data.room + "]");
+  $("#room_h1").text(data.room);
 });
 
 $("input#send").click(function() {
   var name = $("#name").val();
   var msg = $("#message").val();
   var room = $("#rooms").val();
+  var b_room = document.getElementById("room_h1").innerHTML;
   if (name == "" || msg == "" || room == null) {
     $("#alert_box").addClass("alert");
     $("#alert_box").addClass("alert-danger");
@@ -27,7 +32,7 @@ $("input#send").click(function() {
     $("#alert_msg").text("");
   }
   $("#message").val("");
-  socket.emit("sendMessageToServer", {name:name,value:msg,room:room});
+  socket.emit("sendMessageToServer", {name:name,value:msg,room:room,b_room:b_room});
 });
 
 function appendMsgList(data) {
