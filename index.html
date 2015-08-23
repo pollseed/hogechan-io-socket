@@ -5,42 +5,56 @@
   <title>hoge hoge</title>
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/client.css">
 </head>
 <body>
-  <div class="container">
-    <h1 id="room_h1" style="display: none;"></h1>
+  <div id="chat">
+    <div class="container">
+      <div id="room_list" style="display: none;"></div>
+      <div id="member_list" style="display: none;"></div>
+      <h1 id="room_h1" style="display: none;"></h1>
 
-    <form class="pure-form" action="" method="post" onsubmit="return false;">
-      <div class="pure-u-1 pure-u-md-1-3">
+      <br><br>
 
-        <select id="rooms" multiple class="form-control">
-          <option value="緑の部屋">緑の部屋</option>
-          <option value="赤の部屋">赤の部屋</option>
-          <option value="黒の部屋">黒の部屋</option>
-          <option value="白の部屋">白の部屋</option>
-        </select>
-      </div>
+      <nav class="navbar navbar-default">
+        <a class="navbar-brand" href="/">Chatting!</a>
+      </nav>
 
-      <div class="pure-u-3-4">
-        <div id="list" class="pure-u-1">
+      <br><br>
+      <h4>部屋を選択してください</h4>
+      <form class="pure-form" action="" method="post" onsubmit="return false;">
+        <div class="pure-u-1 pure-u-md-1-3">
+
+          <select id="rooms" multiple class="form-control">
+            <option value="緑の部屋">緑の部屋</option>
+            <option value="赤の部屋">赤の部屋</option>
+            <option value="黒の部屋">黒の部屋</option>
+            <option value="白の部屋">白の部屋</option>
+          </select>
+        </div>
+
+        <br><br>
+
+        <div class="bs-example bs-example-popover" data-example-id="static-popovers">
           <ul id="msg_list"></ul>
         </div>
-      </div>
 
-      <div id="alert_box" class="" role="alert">
-        <span id="alert_mark" class="" aria-hidden="true"></span>
-        <span id="alert_msg"></span>
-      </div>
-      <br>
+        <div id="alert_box" class="" role="alert">
+          <span id="alert_mark" class="" aria-hidden="true"></span>
+          <span id="alert_msg"></span>
+        </div>
+        <br>
 
-      <input type="text" class="pure-input-rounded" id="name" placeholder="please input name"/>
-      <input type="text" class="pure-input-rounded" id="message" placeholder="please input message"/>
-      <input type="submit" class="pure-button" id="send" value="送信" />
-    </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/client.js"></script>
+        <h4>名前とメッセージを入力後、送信ボタンをクリックしてください</h4>
+        <input type="text" class="pure-input-rounded" id="name" placeholder="please input name"/>
+        <input type="text" class="pure-input-rounded" id="message" placeholder="please input message"/>
+        <input type="submit" class="pure-button" id="send" value="送信" />
+      </form>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="/js/client.js"></script>
+    </div>
   </div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 var http = require('http'),
     express = require('express'),
     socketIo = require('socket.io'),
+    session = require('express-session'),
     app = express(),
     crypto = require('crypto'),
     fs = require('fs'),
@@ -13,6 +14,12 @@ app.use(function(req,res,next) {
   res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
   next();
 });
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}));
 var server = http.Server(app),
     io = socketIo(server);
 
@@ -24,31 +31,42 @@ app.get('/', function(req,res) {
 app.use(express.static('public'));
 
 io.on('connection', function(socket) {
-  socket.broadcast.emit("sendMessageToClient", {value:"1人入室しました。"});
   socket.on("sendMessageToServer", function(data) {
-    console.log("b_room:" + data.b_room);
-    console.log("room:" + data.room);
+    var rooms_session = socket.adapter.rooms,
+        arr = new Array(),
+        id,
+        json;
+
+    // 部屋が変わったら退出処理
     if (data.b_room != data.room) {
       socket.leave(data.b_room);
     }
+
     data.hash = crypto.createHash(crypto_key).update(socket.id).digest(digest_key);
+
+    // 部屋にあるセッションIDを格納
+    for (id in rooms_session[data.room]) {
+      arr.push(id);
+    }
+    json = createClientMessage(data, arr.indexOf(socket.id) < 0);
+
     socket.join(data.room);
-    socket.emit("sendMessageToClientRoom", createClientMessage(data));
-    socket.to(data.room).emit("sendMessageToClient", createClientMessage(data));
+    socket.emit("sendMyMsg", json);
+    socket.to(data.room).emit("sendRoomMsg", json);
   });
   socket.on("disconnect", function() {
-    socket.broadcast.emit("sendMessageToClient", {value:"1人退室しました。"});
   });
 });
 
 /**
  * クライアント用のデータを格納する.
  */
-function createClientMessage(data) {
+function createClientMessage(data, isNew) {
   return {
-      value:"[" + data.name + "]" + data.value,
       hash:data.hash,
+      value:data.value,
       name:data.name,
-      room:data.room
+      room:data.room,
+      isNewJoin:isNew  // 部屋に新規で来たかどうか
   };
 }

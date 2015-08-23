@@ -1,20 +1,24 @@
 var socket = io.connect('http://localhost:3000');
-socket.on("sendMessageToClient", function(data) {
-  writeInRoomMsgClient(data);
+
+socket.on("sendRoomMsg", function(data) {
+  if (data.isNewJoin) {
+    setMember(data);
+    writeInRoom(data);
+  }
   appendMsgList(data);
 });
 
-socket.on("sendMessageToClientRoom", function(data) {
-  writeInRoomMsgClientRoom(data);
-  appendMsgList(data);
+socket.on("sendMyMsg", function(data) {
+  writeInMyMsg(data);
+  appendMyMsgList(data);
   $("#room_h1").text(data.room);
 });
 
 $("input#send").click(function() {
-  var name = $("#name").val();
-  var msg = $("#message").val();
-  var room = $("#rooms").val();
-  var b_room = document.getElementById("room_h1").innerHTML;
+  var name = $("#name").val(),
+      msg = $("#message").val(),
+      room = $("#rooms").val(),
+      b_room = document.getElementById("room_h1").innerHTML;
   if (errorHandlingDone(name, msg, room)) {
     return false;
   }
@@ -56,9 +60,24 @@ function getErrorMsg(room) {
 }
 
 /**
+* メンバーのハッシュ値を追加します.
+*/
+function setMember(data) {
+  var member_list = $("#member_list > *"),
+      i;
+  for (i = 0; i < member_list.size(); i++) {
+    if (member_list[i].innerHTML == data.hash) {
+      return;
+    }
+  }
+  appendMsgListRoom(data);
+  appendTag($("#member_list"), "p", data.hash);
+}
+
+/**
 * room情報を取得して変更があればタグを設定します(client用).
 */
-function writeInRoomMsgClient(data) {
+function writeInRoom(data) {
   var room = document.getElementById("room_h1").innerHTML;
   if (room == "" && room != data.room[0] && data.name != undefined && data.room[0] != undefined) {
     appendMsgListRoom(data);
@@ -68,7 +87,7 @@ function writeInRoomMsgClient(data) {
 /**
 * room情報を取得して変更があればタグを設定します(clientRoom用).
 */
-function writeInRoomMsgClientRoom(data) {
+function writeInMyMsg(data) {
   var room = document.getElementById("room_h1").innerHTML;
   if (room == "" || room != data.room[0]) {
     appendMsgListRoom(data);
@@ -79,16 +98,31 @@ function writeInRoomMsgClientRoom(data) {
 * #msg_listに指定したデータを設定する.
 */
 function appendMsgListRoom(data) {
-  appendTag($("#msg_list"), "li", data.name + "が" + data.room + "に入室しました");
+  var html = "<div class=\"alert alert-success\" role=\"alert\">" + data.name + "が" + data.room + "に入室しました</div>";
+  appendTag($("#msg_list"), "li", html);
+}
+
+/**
+* #msg_listに指定したデータを設定する.
+*/
+function appendMyMsgList(data) {
+  var html = "<div class=\"myfbox\">"
+              + "<b>" + data.name + "</b><br>"
+              + createHideTag(data.hash) + data.value
+           + "</div>";
+  appendTag($("#msg_list"), "li", html);
 }
 
 /**
 * #msg_listに指定したデータを設定する.
 */
 function appendMsgList(data) {
-  appendTag($("#msg_list"), "li", data.value + createHideTag(data.hash));
+  var html = "<div class=\"fbox\">"
+              + "<b>" + data.name + "</b><br>"
+              + createHideTag(data.hash) + data.value
+           + "</div>";
+  appendTag($("#msg_list"), "li", html);
 }
-
 
 /**
 * jQuery要素に指定したタグで指定した値を設定する.
