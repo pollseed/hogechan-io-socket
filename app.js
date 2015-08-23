@@ -34,7 +34,6 @@ io.on('connection', function(socket) {
     data.hash = crypto.createHash(crypto_key).update(socket.id).digest(digest_key);
     socket.join(data.room);
     socket.emit("sendMessageToClientRoom", createClientMessage(data));
-    // socket.broadcast.to(data.room).emit("sendMessageToClient", createClientMessage(data));
     socket.to(data.room).emit("sendMessageToClient", createClientMessage(data));
   });
   socket.on("disconnect", function() {
@@ -42,6 +41,9 @@ io.on('connection', function(socket) {
   });
 });
 
+/**
+ * クライアント用のデータを格納する.
+ */
 function createClientMessage(data) {
   return {
       value:"[" + data.name + "]" + data.value,
