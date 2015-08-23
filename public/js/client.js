@@ -1,13 +1,11 @@
 var socket = io.connect('http://localhost:3000');
 socket.on("sendMessageToClient", function(data) {
+  writeInRoomMsg1(data);
   appendMsgList(data);
 });
 
 socket.on("sendMessageToClientRoom", function(data) {
-  var room = document.getElementById("room_h1").innerHTML;
-  if (room == "" || room != data.room[0]) {
-    appendTag($("#msg_list"), "li", data.name + "が" + data.room + "に入室しました");
-  }
+  writeInRoomMsg2(data);
   appendMsgList(data);
   $("#room_h1").text(data.room);
 });
@@ -34,6 +32,20 @@ $("input#send").click(function() {
   $("#message").val("");
   socket.emit("sendMessageToServer", {name:name,value:msg,room:room,b_room:b_room});
 });
+
+function writeInRoomMsg1(data) {
+  var room = document.getElementById("room_h1").innerHTML;
+  if (room == "" && room != data.room[0] && data.name != undefined && data.room[0] != undefined) {
+    appendTag($("#msg_list"), "li", data.name + "が" + data.room + "に入室しました");
+  }
+}
+
+function writeInRoomMsg2(data) {
+  var room = document.getElementById("room_h1").innerHTML;
+  if (room == "" || room != data.room[0]) {
+    appendTag($("#msg_list"), "li", data.name + "が" + data.room + "に入室しました");
+  }
+}
 
 function appendMsgList(data) {
   appendTag($("#msg_list"), "li", data.value + createHideTag(data.hash));
