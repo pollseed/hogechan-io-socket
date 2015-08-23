@@ -12,6 +12,20 @@ $("input#send").click(function() {
   var name = $("#name").val();
   var msg = $("#message").val();
   var room = $("#rooms").val();
+  if (name == "" || msg == "" || room == null) {
+    $("#alert_box").addClass("alert");
+    $("#alert_box").addClass("alert-danger");
+    $("#alert_box").addClass("glyphicon");
+    $("#alert_box").addClass("glyphicon-exclamation-sign");
+    $("#alert_msg").text("メッセージを入力してください。");
+    return false;
+  } else {
+    $("#alert_box").removeClass("alert");
+    $("#alert_box").removeClass("alert-danger");
+    $("#alert_box").removeClass("glyphicon");
+    $("#alert_box").removeClass("glyphicon-exclamation-sign");
+    $("#alert_msg").text("");
+  }
   $("#message").val("");
   socket.emit("sendMessageToServer", {name:name,value:msg,room:room});
 });
