@@ -6,12 +6,14 @@ socket.on("sendRoomMsg", function(data) {
     writeInRoom(data);
   }
   appendMsgList(data);
+  endScroll();
 });
 
 socket.on("sendMyMsg", function(data) {
   writeInMyMsg(data);
   appendMyMsgList(data);
   $("#room_h1").text(data.room);
+  endScroll();
 });
 
 $("input#send").click(function() {
@@ -136,4 +138,8 @@ function appendTag($id, tagName, value) {
 */
 function createHideTag(value) {
   return "<span style=\"display: none;\">@" + value + "</span>";
+}
+
+function endScroll() {
+  location.href = "#end";
 }

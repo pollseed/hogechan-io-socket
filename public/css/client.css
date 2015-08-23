@@ -23,7 +23,7 @@ body {
 
   min-height: 500px;
   min-width: 500px;
-  overflow: hidden;
+  overflow: scroll;
 
   background-color: #fff;
   border-radius: 0 8px 0 8px;
