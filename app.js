@@ -34,9 +34,20 @@ app.get('/', function(req,res) {
 });
 app.use(express.static('public'));
 
-logger.info('welcome to room.');
+logger.info(
+  '\n\n               [ WelCome ]' +
+  '\n ------------------------------------------\n' +
+  '   =====\\\\ \n' +
+  ' //                                 |   ||\n' +
+  '||        ===   ===  === |===  === ===  ||\n' +
+  ' \\\\      |   | |   ||   ||=== |     |   ||\n' +
+  '   ====== ===  |   ||   ||===  ===  |   ..\n\n' +
+  '                                by POLLSEED' +
+  '\n -------------------------------------------\n'
+);
 
 io.on('connection', function(socket) {
+  logger.info(socket.handshake.headers);
   socket.on("sendMessageToServer", function(data) {
     var rooms_session = socket.adapter.rooms,
         arr = new Array(),
