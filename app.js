@@ -5,6 +5,8 @@ var http = require('http'),
     app = express(),
     crypto = require('crypto'),
     fs = require('fs'),
+    log4js = require('log4js'),
+    logger = log4js.getLogger('request'),
     crypto_key = 'sha1',
     digest_key = 'base64';
 app.use(function(req,res,next) {
@@ -23,12 +25,16 @@ app.use(session({
 var server = http.Server(app),
     io = socketIo(server);
 
+logger.setLevel('INFO');
+
 server.listen(3000);
 
 app.get('/', function(req,res) {
   res.sendFile(__dirname + '/index.html');
 });
 app.use(express.static('public'));
+
+logger.info('welcome to room.');
 
 io.on('connection', function(socket) {
   socket.on("sendMessageToServer", function(data) {
@@ -49,6 +55,7 @@ io.on('connection', function(socket) {
       arr.push(id);
     }
     json = createClientMessage(data, arr.indexOf(socket.id) < 0);
+    logger.info(json);
 
     socket.join(data.room);
     socket.emit("sendMyMsg", json);
