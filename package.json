@@ -9,5 +9,9 @@
     "express-session": "*",
     "jquery": "*",
     "log4js": "*"
+  },
+  "engines": {
+    "node": "0.12.7",
+    "npm": "2.11.3"
   }
 }
