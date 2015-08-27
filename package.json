@@ -7,7 +7,6 @@
     "socket.io": "*",
     "socket.io-redis": "*",
     "express-session": "*",
-    "jquery": "*",
     "log4js": "*"
   },
   "engines": {
