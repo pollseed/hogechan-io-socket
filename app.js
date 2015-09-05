@@ -7,6 +7,7 @@ var http = require('http'),
     fs = require('fs'),
     log4js = require('log4js'),
     logger = log4js.getLogger('request'),
+    port = process.env.PORT || 3000,
     crypto_key = 'sha1',
     digest_key = 'base64';
 app.use(function(req,res,next) {
@@ -23,11 +24,13 @@ app.use(session({
   cookie: { secure: true }
 }));
 var server = http.Server(app),
-    io = socketIo(server);
+    io = socketIo.listen(server);
 
 logger.setLevel('INFO');
 
-server.listen(3000);
+server.listen(port, function() {
+  logger.info("server listening on port %d in %s mode", this.address().port, app.settings.env);
+});
 
 app.get('/', function(req,res) {
   res.sendFile(__dirname + '/index.html');

@@ -5,6 +5,7 @@
   "dependencies": {
     "express": "*",
     "socket.io": "*",
+    "socket.io-client": "*",
     "socket.io-redis": "*",
     "express-session": "*",
     "log4js": "*"
