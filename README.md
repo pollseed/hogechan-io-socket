@@ -1,4 +1,4 @@
-# Ch@tting!!
+# Ch@tting!! v0.1
 
 ![aaa](public/img/logo_640x480.png)
 
