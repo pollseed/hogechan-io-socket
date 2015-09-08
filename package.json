@@ -8,7 +8,8 @@
     "socket.io-client": "*",
     "socket.io-redis": "*",
     "express-session": "*",
-    "log4js": "*"
+    "log4js": "*",
+    "basic-auth-connect": "*"
   },
   "engines": {
     "node": "0.12.7",

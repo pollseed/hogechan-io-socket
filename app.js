@@ -3,6 +3,7 @@ var http = require('http'),
     socketIo = require('socket.io'),
     session = require('express-session'),
     app = express(),
+    basicAuth = require('basic-auth-connect');
     crypto = require('crypto'),
     fs = require('fs'),
     log4js = require('log4js'),
@@ -23,6 +24,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: true }
 }));
+app.use(basicAuth('pollseed', 'onikoroshi'));
 var server = http.Server(app),
     io = socketIo.listen(server);
 
