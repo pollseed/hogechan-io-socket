@@ -1,4 +1,7 @@
-# Summary
+# Ch@tting!!
+
+![aaa](public/img/logo_640x480.png)
+
 コミュニケーションを取るためのチャットサービス
 
 ## name
