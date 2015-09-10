@@ -100,7 +100,7 @@ function writeInMyMsg(data) {
 * #msg_listに指定したデータを設定する.
 */
 function appendMsgListRoom(data) {
-  var html = "<div class=\"alert alert-success\" role=\"alert\">" + data.name + "が" + data.room + "に入室しました</div>";
+  var html = "<div class=\"alert alert-success\" role=\"alert\" style=\"width: 300px;\">" + data.name + "が" + data.room + "に入室しました</div>";
   appendTag($("#msg_list"), "li", html);
 }
 
