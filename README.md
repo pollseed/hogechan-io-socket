@@ -21,3 +21,8 @@ node app.js
 open localhost:3000
 open localhost:3000
 ```
+
+## screenshot
+
+![hoge](public/img/Screenshot_01.png)
+![hoge](public/img/Screenshot_02.png)
