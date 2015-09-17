@@ -9,7 +9,10 @@
   <!--
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 -->
+  <!--
   <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
+  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/primer/2.0.2/primer.css">
   <link rel="stylesheet" href="/css/client.css">
 </head>
 <body>
@@ -23,20 +26,20 @@
 
       <nav class="navbar navbar-default">
         <a href="/">
-          <img src="/img/logo.png" width="200px" height="100px" class="img-responsive" alt="Responsive image">
+          <img src="/img/logo.png" width="340px" height="100px" class="img-responsive" alt="Responsive image">
         </a>
       </nav>
 
       <br><br>
-      <h4><mark>部屋</mark>を選択してください</h4>
+      <h4><span class="state state-open">部屋</span>&nbsp;を選択してください</h4>
       <form action="" method="post" onsubmit="return false;">
         <div class="form-group" style="width: 250px;">
 
           <select id="rooms" multiple class="form-control">
-            <option value="緑の部屋">緑の部屋</option>
-            <option value="赤の部屋">赤の部屋</option>
-            <option value="黒の部屋">黒の部屋</option>
-            <option value="白の部屋">白の部屋</option>
+            <option value="うさぎ">うさぎ</option>
+            <option value="こいぬ">こいぬ</option>
+            <option value="かもめ">かもめ</option>
+            <option value="ねこ">ねこ</option>
           </select>
         </div>
 
@@ -53,15 +56,14 @@
         <br>
 
         <h5 style="line-height: 140%">名前とメッセージを入力後、<br>
-          <mark>送信</mark>ボタンをクリックしてください</h5>
+          <span class="state state-open">送信</span>&nbspボタンをクリックしてください</h5>
         <div class="row">
           <div class="col-xs-4">
-            <input type="text" class="form-control" id="name" placeholder="name"/>
+            <input type="text" class="input-mini" id="name" placeholder="name"/>
+            <input type="text" class="input-mini" id="message" placeholder="message"/>
           </div>
-          <div class="col-xs-4">
-            <input type="text" class="form-control" id="message" placeholder="message"/>
-          </div>
-        <input type="submit" class="btn btn-default" id="send" value="送信" />
+          <br>
+        <input type="submit" class="btn btn-outline" id="send" value="送信" />
         </div>
       </form>
 

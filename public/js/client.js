@@ -1,4 +1,6 @@
-var socket = io();
+"use strict";
+
+const socket = io();
 
 socket.on("sendRoomMsg", function(data) {
   if (data.isNewJoin) {
@@ -16,7 +18,7 @@ socket.on("sendMyMsg", function(data) {
   endScroll();
 });
 
-$("input#send").click(function() {
+function message_main() {
   var name = $("#name").val(),
       msg = $("#message").val(),
       room = $("#rooms").val(),
@@ -26,24 +28,27 @@ $("input#send").click(function() {
   }
   $("#message").val("");
   socket.emit("sendMessageToServer", {name:name,value:msg,room:room,b_room:b_room});
-});
+}
+
+function click() {
+  var el = document.getElementById("send");
+  el.addEventListener('click', message_main, false);
+}
+
+document.addEventListener('DOMContentLoaded', click, false);
 
 /**
 * エラー処理をする.
 */
 function errorHandlingDone(name, msg, room) {
   if (name == "" || msg == "" || room == null) {
-    $("#alert_box").addClass("alert");
-    $("#alert_box").addClass("alert-danger");
-    $("#alert_box").addClass("glyphicon");
-    $("#alert_box").addClass("glyphicon-exclamation-sign");
+    $("#alert_box").addClass("flash");
+    $("#alert_box").addClass("flash-error");
     $("#alert_msg").text(getErrorMsg(room));
     return true;
   } else {
-    $("#alert_box").removeClass("alert");
-    $("#alert_box").removeClass("alert-danger");
-    $("#alert_box").removeClass("glyphicon");
-    $("#alert_box").removeClass("glyphicon-exclamation-sign");
+    $("#alert_box").removeClass("flash");
+    $("#alert_box").removeClass("flash-error");
     $("#alert_msg").text("");
     return false;
   }
@@ -100,7 +105,7 @@ function writeInMyMsg(data) {
 * #msg_listに指定したデータを設定する.
 */
 function appendMsgListRoom(data) {
-  var html = "<div class=\"alert alert-success\" role=\"alert\" style=\"width: 300px;\">" + data.name + "が" + data.room + "に入室しました</div>";
+  var html = "<div class=\"flash\" role=\"alert\" style=\"width: 300px;\">" + data.name + "が" + data.room + "に入室しました</div>";
   appendTag($("#msg_list"), "li", html);
 }
 
