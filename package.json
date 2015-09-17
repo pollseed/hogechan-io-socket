@@ -5,15 +5,14 @@
   "dependencies": {
     "express": "*",
     "socket.io": "*",
-    "socket.io-client": "*",
     "socket.io-redis": "*",
     "express-session": "*",
     "log4js": "*",
     "basic-auth-connect": "*"
   },
   "engines": {
-    "node": "0.12.7",
-    "npm": "2.11.3"
+    "node": "*",
+    "npm": "*"
   },
   "scripts": {
     "start": "node app.js"
