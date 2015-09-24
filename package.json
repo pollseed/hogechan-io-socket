@@ -2,11 +2,12 @@
   "name": "node-test",
   "version": "0.0.1",
   "private": true,
+  "author": "pollseed",
+  "lisence": "MIT",
   "dependencies": {
     "express": "*",
-    "socket.io": "*",
-    "socket.io-redis": "*",
     "express-session": "*",
+    "socket.io": "*",
     "log4js": "*",
     "basic-auth-connect": "*"
   },

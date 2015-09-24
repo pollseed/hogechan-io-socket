@@ -1,6 +1,6 @@
 const CRYPTO_KEY = 'sha1',
       DIGEST_KEY = 'base64';
- 
+
 var http = require('http'),
     express = require('express'),
     socketIo = require('socket.io'),
@@ -52,9 +52,9 @@ logger.info(
   '\n -------------------------------------------\n'
 );
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   logger.info(socket.handshake.headers);
-  socket.on("sendMessageToServer", (data) => {
+  socket.on("sendMessageToServer", data => {
     var rooms_session = socket.adapter.rooms,
         arr = new Array(),
         id,
