@@ -1,8 +1,8 @@
 "use strict";
 
-const socket = io();
+const SOCKET = io();
 
-socket.on("sendRoomMsg", data => {
+SOCKET.on("sendRoomMsg", data => {
   if (data.isNewJoin) {
     setMember(data);
     writeInRoom(data);
@@ -11,7 +11,7 @@ socket.on("sendRoomMsg", data => {
   endScroll();
 });
 
-socket.on("sendMyMsg", data => {
+SOCKET.on("sendMyMsg", data => {
   writeInMyMsg(data);
   appendMyMsgList(data);
   $("#room_h1").text(data.room);
@@ -25,7 +25,7 @@ function message_main() {
       b_room = document.getElementById("room_h1").innerHTML;
   if (errorHandlingDone(name, msg, room)) return false;
   $("#message").val("");
-  socket.emit("sendMessageToServer", {name:name,value:msg,room:room,b_room:b_room});
+  SOCKET.emit("sendMessageToServer", {name:name,value:msg,room:room,b_room:b_room});
 }
 
 function click() {
