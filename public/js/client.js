@@ -56,8 +56,7 @@ function errorHandlingDone(name, msg, room) {
 * room情報によってエラーメッセージを判定して取得する.
 */
 function getErrorMsg(room) {
-    if (room == null) return "部屋を選択してください。";
-    return "メッセージを入力してください。";
+  return room == null ? "部屋を選択してください。" : "メッセージを入力してください。";
 }
 
 /**
@@ -95,7 +94,7 @@ function writeInMyMsg(data) {
 * #msg_listに指定したデータを設定する.
 */
 function appendMsgListRoom(data) {
-  let html = "<div class=\"flash\" role=\"alert\" style=\"width: 300px;\">" + data.name + "が" + data.room + "に入室しました</div>";
+  let html = `<div class=\"flash\" role=\"alert\" style=\"width: 300px;\">${data.name}が${data.room}に入室しました</div>`;
   appendTag($("#msg_list"), "li", html);
 }
 
@@ -103,10 +102,7 @@ function appendMsgListRoom(data) {
 * #msg_listに指定したデータを設定する.
 */
 function appendMyMsgList(data) {
-  let html = "<div class=\"myfbox\">"
-              + "<b>" + data.name + "</b><br>"
-              + createHideTag(data.hash) + data.value
-           + "</div>";
+  let html = `<div class=\"myfbox\"><b>${data.name}</b><br>${createHideTag(data.hash)}${data.value}</div>`;
   appendTag($("#msg_list"), "li", html);
 }
 
@@ -114,10 +110,7 @@ function appendMyMsgList(data) {
 * #msg_listに指定したデータを設定する.
 */
 function appendMsgList(data) {
-  let html = "<div class=\"fbox\">"
-              + "<b>" + data.name + "</b><br>"
-              + createHideTag(data.hash) + data.value
-           + "</div>";
+  let html = `<div class=\"fbox\"><b>${data.name}</b><br>${createHideTag(data.hash)}${data.value}</div>`;
   appendTag($("#msg_list"), "li", html);
 }
 
@@ -125,14 +118,14 @@ function appendMsgList(data) {
 * jQuery要素に指定したタグで指定した値を設定する.
 */
 function appendTag($id, tagName, value) {
-  $id.append($("<" + tagName + ">").html(value));
+  $id.append($(`<${tagName}>`).html(value));
 }
 
 /**
 * 隠しデータ用のタグを生成する.
 */
 function createHideTag(value) {
-  return "<span style=\"display: none;\">@" + value + "</span>";
+  return `<span style=\"display: none;\">@${value}</span>`;
 }
 
 function endScroll() {

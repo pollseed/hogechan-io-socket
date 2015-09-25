@@ -32,7 +32,7 @@ var server = HTTP.Server(app),
 LOGGER.setLevel('INFO');
 
 server.listen(PORT, function() {
-  LOGGER.info("server listening on port %d in %s mode", this.address().port, app.settings.env);
+  LOGGER.info(`server listening on port ${this.address().port} in ${app.settings.env} mode`);
 });
 
 app.get('/', (req,res) => res.sendFile(__dirname + '/index.html'));
@@ -72,8 +72,7 @@ io.on('connection', socket => {
     socket.emit("sendMyMsg", json);
     socket.to(data.room).emit("sendRoomMsg", json);
   });
-  socket.on("disconnect", () => {
-  });
+  socket.on("disconnect", () => {});
 });
 
 /**
