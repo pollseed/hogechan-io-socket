@@ -31,23 +31,23 @@ var server = HTTP.Server(app),
 
 LOGGER.setLevel('INFO');
 
-server.listen(PORT, function() {
-  LOGGER.info(`server listening on port ${this.address().port} in ${app.settings.env} mode`);
+server.listen(PORT, () => {
+  LOGGER.info(`server listening on port ${server.address().port} in ${app.settings.env} mode`);
 });
 
 app.get('/', (req,res) => res.sendFile(__dirname + '/index.html'));
 app.use(express.static('public'));
 
 LOGGER.info(
-  '\n\n               [ WelCome ]' +
-  '\n ------------------------------------------\n' +
-  '   =====\\\\ \n' +
-  ' //                                 |   ||\n' +
-  '||        ===   ===  === |===  === ===  ||\n' +
-  ' \\\\      |   | |   ||   ||=== |     |   ||\n' +
-  '   ====== ===  |   ||   ||===  ===  |   ..\n\n' +
-  '                                by POLLSEED' +
-  '\n -------------------------------------------\n'
+  `\n\n               [ WelCome ]
+ ------------------------------------------
+     =====\\\\
+   //                                 |   ||
+  ||        ===   ===  === |===  === ===  ||
+   \\\\      |   | |   ||   ||=== |     |   ||
+     ====== ===  |   ||   ||===  ===  |   ..
+                                  by POLLSEED
+ -------------------------------------------\n`
 );
 
 io.on('connection', socket => {

@@ -64,9 +64,10 @@ function getErrorMsg(room) {
 */
 function setMember(data) {
   let member_list = $("#member_list > *"),
-      i;
-  for (i = 0; i < member_list.size(); i++) {
-    if (member_list[i].innerHTML == data.hash) return;
+      i,
+      len;
+  for (i = 0, len = member_list.size(); i < len; i++) {
+    if (member_list[i].innerHTML === data.hash) return;
   }
   appendMsgListRoom(data);
   appendTag($("#member_list"), "p", data.hash);
