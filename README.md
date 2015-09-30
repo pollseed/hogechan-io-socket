@@ -1,11 +1,11 @@
-# Ch@tting!! v0.1
+# Ch@tting!! v0.0.3
 
-![aaa](public/img/logo_640x480.png)
+![aaa](public/img/logo.png)
 
-コミュニケーションを取るためのチャットサービス
+楽観的な検索を許容します
 
 ## name
-Chatting!
+Optimistic Search
 
 ## env
 * node.js v4.1.1
@@ -23,6 +23,3 @@ open localhost:3000
 ```
 
 ## screenshot
-
-![hoge](public/img/Screenshot_01.png)
-![hoge](public/img/Screenshot_02.png)
