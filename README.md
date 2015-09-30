@@ -1,4 +1,4 @@
-# Ch@tting!! v0.0.3
+# Optimistic Search v0.0.3
 
 ![aaa](public/img/logo.png)
 
