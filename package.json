@@ -1,6 +1,6 @@
 {
   "name": "node-test",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "author": "pollseed",
   "lisence": "MIT",
@@ -8,8 +8,8 @@
     "express": "*",
     "express-session": "*",
     "socket.io": "*",
-    "log4js": "*",
-    "basic-auth-connect": "*"
+    "request": "*",
+    "log4js": "*"
   },
   "engines": {
     "node": "*",
