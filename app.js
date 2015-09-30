@@ -60,8 +60,6 @@ io.on('connection', socket => {
   socket.on("sendMessageToServer", data => {
     var message = data.msg,
         tech = data.tech,
-        invalidTech = false,
-        json = createClientMessage(data, socket.id),
         tech_info = createTechInfo(tech, message);
 
     LOGGER.info(`次の検索サービスが指定されました。 => ${tech}`);
@@ -82,30 +80,8 @@ io.on('connection', socket => {
         REQUEST(v, (err, res, body) => {
           if (!err && res.statusCode === 200) {
             LOGGER.info(`start to download`);
-            var urls = [],
-                file_name = 'tech_info_' + new Date().getTime() + '.txt',
-                content;
-            if (v.url.indexOf('github') >= 0) {
-              JSON.parse(body).items.forEach(item => { urls.push(item.html_url) });
-              content = urls.toString();
-            } else if (v.url.indexOf('stackexchange') >= 0) {
-              // FIXME gunzip系の処理でバグ発生
-              LOGGER.error(res);
-              return ;
-              // var gunzip = ZLIB.Gunzip(body);
-              // content = gunzip.decompress();
-              LOGGER.info(content);
-              ZLIB.gunzip(deflated, (err, binary) => {
-                content = binary;
-                LOGGER.info(content);
-                done();
-              });
-              JSON.parse(body).items.forEach(item => { LOGGER.info(item) });
-              JSON.parse(body).items.forEach(item => { urls.push(item.link) });
-            } else {
-              // cannot go here.
-            }
-            FS.writeFile(file_name, content, 'utf-8', e => {
+            var file_name = 'tech_info_' + new Date().getTime() + '.txt';
+            FS.writeFile(file_name, createContent(v, body), 'utf-8', e => {
               if (e !== null) LOGGER.error(e);
             });
             LOGGER.info(`download to ${file_name}`)
@@ -116,41 +92,53 @@ io.on('connection', socket => {
         });
       });
     }
-    socket.emit("sendMyMsg", json);
+    socket.emit("sendMyMsg", {
+      hash: CRYPTO.createHash(CRYPTO_KEY).update(socket.id).digest(DIGEST_KEY),
+      msg: data.msg
+    });
   });
   socket.on("disconnect", () => {});
 });
 
 /**
+ * コンテンツを生成.
+ */
+function createContent(options, body) {
+  var urls = [];
+  if (options.url.indexOf('github') >= 0) {
+    JSON.parse(body).items.forEach(item => { urls.push(item.html_url) });
+    return urls.toString();
+  } else if (options.url.indexOf('stackexchange') >= 0) {
+    // FIXME gunzip系の処理でバグ発生
+    ;
+    return false;
+    // var gunzip = ZLIB.Gunzip(body);
+    // content = gunzip.decompress();
+    ZLIB.gunzip(deflated, (err, binary) => {
+      content = binary;
+    });
+    JSON.parse(body).items.forEach(item => { urls.push(item.link) });
+  } else {
+    // cannot go here.
+  }
+}
+
+/**
  * 技術情報を生成.
  */
 function createTechInfo(tech, message) {
-  var options_array = [],
-      options = {
-        url: '',
-        headers: {
-          'User-Agent': 'request'
-        }
-      };
-
+  var options_array = [];
   tech.forEach(v => {
     if (TECH_MAP.get(v) === undefined) return { invalid_tech: true, options_array: [] };
     TECH_MAP.get(v).forEach(url => {
-      options.url = UTIL.format(url, message);
-      options_array.push(options);
+      options_array.push({
+        url: UTIL.format(url, message),
+        headers: { 'User-Agent': 'request' }
+      });
     });
   });
   return { invalid_tech: false, options_array: options_array };
 }
-
-function createClientMessage(data, id) {
-  return {
-    hash: CRYPTO.createHash(CRYPTO_KEY).update(id).digest(DIGEST_KEY),
-    msg: data.msg
-  };
-}
-
-
 
 // io.on('connection', socket => {
 //   LOGGER.info(socket.handshake.headers);
