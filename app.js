@@ -9,21 +9,7 @@ const CRYPTO_KEY = 'sha1',
       REQUEST = require('request'),
       UTIL = require('util'),
       FS = require('fs'),
-      // OUTFILE = FS.createWriteStream('test.html'),
-      OUTFILE = 'test.html',
-      TECH_VALUES = ["1","2"],
-      REQUEST_URLS = [
-        "",
-        "https://github.com/search?utf8=%E2%9C%93&q=%s&type=Issues&ref=searchresults",
-        "http://stackoverflow.com/search?q=%s",
-        // google: "https://www.google.co.jp/#q=%s" // -> cURLで使えないため
-      ];
-
-var options = {
-        uri: 'http://sakazaki-locust.tumblr.com/',
-        form: {},
-        json: true
-      };
+      TECH_MAP = new Map().set("1", "https://api.github.com/search/repositories?q=%s").set("2", "http://stackoverflow.com/search?q=%s");
 
 var express = require('express'),
     session = require('express-session'),
@@ -73,16 +59,13 @@ io.on('connection', socket => {
     var message = data.msg,
         tech = data.tech,
         invalidTech = false,
-        json = createClientMessage(data, socket.id);
-    LOGGER.info(`次の用語が楽観的検索ワードに指定されました。 => ${message} by ${socket.id}`);
-    LOGGER.info(tech);
-    for (var i = 0; i < tech.length; i++) {
-      if (invalidTech) break;
-      invalidTech = TECH_VALUES.indexOf(tech[i]) === -1;
-    }
+        json = createClientMessage(data, socket.id),
+        tech_info = createTechInfo(tech, message);
 
-    var url = UTIL.format(REQUEST_URLS[tech], message);
-    if (invalidTech) {
+    LOGGER.info(`次の検索サービスが指定されました。 => ${tech}`);
+    LOGGER.info(`次の用語が楽観的検索ワードに指定されました。 => ${message} by ${socket.id}`);
+
+    if (tech_info.invalidTech) {
       // tech情報が不正
       LOGGER.error(`tech is invalid [${tech}]`);
       return;
@@ -90,35 +73,51 @@ io.on('connection', socket => {
     if (tech.length > 1) {
       // techが複数選択された
       LOGGER.info("全実行します。");
-      // 全実行する
+      // TODO 全実行する
+
     } else {
-      LOGGER.info(url);
-      REQUEST(url, (err, res, body) => {
-        if (!err && res.statusCode === 200) {
-          LOGGER.info(`start to download`);
-          FS.writeFile(OUTFILE, body, 'utf-8', e => {
-            if (e !== null) {
-              LOGGER.error(e);
-            }
-          });
-          LOGGER.info(`download to ${OUTFILE}`)
-        } else {
-          LOGGER.info(`error : ${res.statusCode}`);
-        }
+      tech_info.options_array.forEach(v => {
+        REQUEST(v, (err, res, body) => {
+          if (!err && res.statusCode === 200) {
+            LOGGER.info(`start to download`);
+            var html_urls = [],
+                file_name = 'tech_info_' + new Date().getTime() + '.txt';
+            JSON.parse(body).items.forEach(v => { html_urls.push(v.html_url) });
+            FS.writeFile(file_name, html_urls.toString(), 'utf-8', e => {
+              if (e !== null) LOGGER.error(e);
+            });
+            LOGGER.info(`download to ${file_name}`)
+          } else {
+            LOGGER.error(`error : ${res.statusCode}`);
+            LOGGER.error(`body : ${body}`);
+          }
+        });
       });
     }
-    // REQUEST(UTIL.format(REQUEST_URLS.google, message), (err, res, body) => {
-    //   if (!err && res.statusCode === 200) {
-    //     LOGGER.info(body);
-    //   } else {
-    //     LOGGER.info(`error : ${res.statusCode}`);
-    //   }
-    // });
-
     socket.emit("sendMyMsg", json);
   });
   socket.on("disconnect", () => {});
 });
+
+/**
+ * 技術情報を生成.
+ */
+function createTechInfo(tech, message) {
+  var options_array = [],
+      options = {
+        url: '',
+        headers: {
+          'User-Agent': 'request'
+        }
+      };
+
+  tech.forEach(v => {
+    if (TECH_MAP.get(v) === undefined) return { invalid_tech: true, options_array: [] };
+    options.url = UTIL.format(TECH_MAP.get(v), message);
+    options_array.push(options);
+  });
+  return { invalid_tech: false, options_array: options_array };
+}
 
 function createClientMessage(data, id) {
   return {
