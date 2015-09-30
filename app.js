@@ -10,7 +10,7 @@ const CRYPTO_KEY = 'sha1',
       UTIL = require('util'),
       FS = require('fs'),
       ZLIB = require('zlib'),
-      TECH_MAP = new Map().set("1", "https://api.github.com/search/repositories?q=%s")
+      TECH_MAP = new Map().set("1", ["https://api.github.com/search/repositories?q=%s", "https://api.github.com/search/issues?q=%s"])
         .set("2", "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=%s%204.0&site=stackoverflow");
 
 var express = require('express'),
@@ -86,9 +86,9 @@ io.on('connection', socket => {
                 file_name = 'tech_info_' + new Date().getTime() + '.txt',
                 content;
             if (v.url.indexOf('github') >= 0) {
-              content = urls.toString();
               JSON.parse(body).items.forEach(item => { urls.push(item.html_url) });
-            } else if (v.url.indexOf('stackexchange') > = 0) {
+              content = urls.toString();
+            } else if (v.url.indexOf('stackexchange') >= 0) {
               // FIXME gunzip系の処理でバグ発生
               LOGGER.error(res);
               return ;
@@ -135,8 +135,10 @@ function createTechInfo(tech, message) {
 
   tech.forEach(v => {
     if (TECH_MAP.get(v) === undefined) return { invalid_tech: true, options_array: [] };
-    options.url = UTIL.format(TECH_MAP.get(v), message);
-    options_array.push(options);
+    TECH_MAP.get(v).forEach(url => {
+      options.url = UTIL.format(url, message);
+      options_array.push(options);
+    });
   });
   return { invalid_tech: false, options_array: options_array };
 }
