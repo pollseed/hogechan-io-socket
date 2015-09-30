@@ -9,7 +9,9 @@ const CRYPTO_KEY = 'sha1',
       REQUEST = require('request'),
       UTIL = require('util'),
       FS = require('fs'),
-      TECH_MAP = new Map().set("1", "https://api.github.com/search/repositories?q=%s").set("2", "http://stackoverflow.com/search?q=%s");
+      ZLIB = require('zlib'),
+      TECH_MAP = new Map().set("1", "https://api.github.com/search/repositories?q=%s")
+        .set("2", "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=%s%204.0&site=stackoverflow");
 
 var express = require('express'),
     session = require('express-session'),
@@ -80,10 +82,30 @@ io.on('connection', socket => {
         REQUEST(v, (err, res, body) => {
           if (!err && res.statusCode === 200) {
             LOGGER.info(`start to download`);
-            var html_urls = [],
-                file_name = 'tech_info_' + new Date().getTime() + '.txt';
-            JSON.parse(body).items.forEach(v => { html_urls.push(v.html_url) });
-            FS.writeFile(file_name, html_urls.toString(), 'utf-8', e => {
+            var urls = [],
+                file_name = 'tech_info_' + new Date().getTime() + '.txt',
+                content;
+            if (v.url.indexOf('github') >= 0) {
+              content = urls.toString();
+              JSON.parse(body).items.forEach(item => { urls.push(item.html_url) });
+            } else if (v.url.indexOf('stackexchange') > = 0) {
+              // FIXME gunzip系の処理でバグ発生
+              LOGGER.error(res);
+              return ;
+              // var gunzip = ZLIB.Gunzip(body);
+              // content = gunzip.decompress();
+              LOGGER.info(content);
+              ZLIB.gunzip(deflated, (err, binary) => {
+                content = binary;
+                LOGGER.info(content);
+                done();
+              });
+              JSON.parse(body).items.forEach(item => { LOGGER.info(item) });
+              JSON.parse(body).items.forEach(item => { urls.push(item.link) });
+            } else {
+              // cannot go here.
+            }
+            FS.writeFile(file_name, content, 'utf-8', e => {
               if (e !== null) LOGGER.error(e);
             });
             LOGGER.info(`download to ${file_name}`)
