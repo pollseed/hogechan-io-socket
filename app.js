@@ -10,7 +10,8 @@ const CRYPTO_KEY = 'sha1',
       UTIL = require('util'),
       FS = require('fs'),
       ZLIB = require('zlib'),
-      TECH_MAP = new Map().set("1", ["https://api.github.com/search/repositories?q=%s", "https://api.github.com/search/issues?q=%s"])
+      TECH_MAP = new Map()
+        .set("1", ["https://api.github.com/search/repositories?q=%s", "https://api.github.com/search/issues?q=%s"])
         .set("2", "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=%s%204.0&site=stackoverflow");
 
 var express = require('express'),
@@ -60,7 +61,8 @@ io.on('connection', socket => {
   socket.on("sendMessageToServer", data => {
     var message = data.msg,
         tech = data.tech,
-        tech_info = createTechInfo(tech, message);
+        tech_info = createTechInfo(tech, message),
+        result = [];
 
     LOGGER.info(`次の検索サービスが指定されました。 => ${tech}`);
     LOGGER.info(`次の用語が楽観的検索ワードに指定されました。 => ${message} by ${socket.id}`);
@@ -79,23 +81,24 @@ io.on('connection', socket => {
       tech_info.options_array.forEach(v => {
         REQUEST(v, (err, res, body) => {
           if (!err && res.statusCode === 200) {
-            LOGGER.info(`start to download`);
-            var file_name = 'tech_info_' + new Date().getTime() + '.txt';
-            FS.writeFile(file_name, createContent(v, body), 'utf-8', e => {
-              if (e !== null) LOGGER.error(e);
-            });
-            LOGGER.info(`download to ${file_name}`)
+            var content = createContent(v, body);
+            result = content;
+            // var file_name = `tech_info_${new Date().getTime()}.txt`;
+            // FS.writeFile(file_name, createContent(v, body), 'utf-8', e => {
+            //   if (e !== null) LOGGER.error(e);
+            // });
           } else {
             LOGGER.error(`error : ${res.statusCode}`);
             LOGGER.error(`body : ${body}`);
           }
-        });
+          LOGGER.info(`api get data : ${result}`);
+          socket.emit("sendMyMsg", {
+            // hash: CRYPTO.createHash(CRYPTO_KEY).update(socket.id).digest(DIGEST_KEY),
+            result: result
+          });
+        }).end();
       });
     }
-    socket.emit("sendMyMsg", {
-      hash: CRYPTO.createHash(CRYPTO_KEY).update(socket.id).digest(DIGEST_KEY),
-      msg: data.msg
-    });
   });
   socket.on("disconnect", () => {});
 });
