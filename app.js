@@ -81,8 +81,7 @@ io.on('connection', socket => {
       tech_info.options_array.forEach(v => {
         REQUEST(v, (err, res, body) => {
           if (!err && res.statusCode === 200) {
-            var content = createContent(v, body);
-            result = content;
+            result = createContent(v, body);
             // var file_name = `tech_info_${new Date().getTime()}.txt`;
             // FS.writeFile(file_name, createContent(v, body), 'utf-8', e => {
             //   if (e !== null) LOGGER.error(e);

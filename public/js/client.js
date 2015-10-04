@@ -3,7 +3,16 @@
 const SOCKET = io();
 
 SOCKET.on("sendMyMsg", data => {
-  console.log(data);
+  let result = document.getElementById("result"),
+      li, a;
+  data.result.split(",").forEach(v => {
+    li = document.createElement("li");
+    a = document.createElement("a");
+    a.innerHTML = v;
+    a.href = v;
+    li.appendChild(a);
+    result.appendChild(li);
+  });
 });
 
 function message_main() {
