@@ -62,7 +62,8 @@ io.on('connection', socket => {
     var message = data.msg,
         tech = data.tech,
         tech_info = createTechInfo(tech, message),
-        result = [];
+        result = [],
+        number = 0;
 
     LOGGER.info(`次の検索サービスが指定されました。 => ${tech}`);
     LOGGER.info(`次の用語が楽観的検索ワードに指定されました。 => ${message} by ${socket.id}`);
@@ -95,6 +96,7 @@ io.on('connection', socket => {
             // hash: CRYPTO.createHash(CRYPTO_KEY).update(socket.id).digest(DIGEST_KEY),
             result: result
           });
+          number++;
         }).end();
       });
     }

@@ -3,22 +3,45 @@
 const SOCKET = io();
 
 SOCKET.on("sendMyMsg", data => {
+  let session = JSON.parse(sessionStorage.getItem('data')),
+      result = document.getElementById("result");
+  if (session !== null && session.result !== undefined) {
+    data.result = session.result + data.result;
+  }
+  sessionStorage.setItem('data', JSON.stringify(data));
+  appendResult(data.result);
+});
+
+(function() {
+  let session = JSON.parse(sessionStorage.getItem('data'));
+  if (session !== null) {
+    appendResult(session.result);
+  }
+}());
+
+function appendResult(urls) {
   let result = document.getElementById("result"),
+      div = document.createElement("div"),
       li, a;
-  data.result.split(",").forEach(v => {
+  urls.split(",").forEach(v => {
     li = document.createElement("li");
     a = document.createElement("a");
     a.innerHTML = v;
     a.href = v;
     li.appendChild(a);
-    result.appendChild(li);
+    div.appendChild(li);
   });
-});
+  div.setAttribute('class', 'li_result');
+  result.appendChild(div);
+}
 
 function message_main() {
   let $msg = $("#message").val(),
-      $tech = $("#select_tech").val();
+      $tech = $("#select_tech").val(),
+      result = document.getElementById("result");
   if (errorHandlingDone($msg, $tech)) return false;
+  result.innerHTML = '';
+  sessionStorage.removeItem('data');
   $("#message").val("");
   SOCKET.emit("sendMessageToServer", { msg: $msg, tech: $tech });
 }
