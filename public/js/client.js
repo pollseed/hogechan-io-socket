@@ -1,3 +1,8 @@
+/**
+ * @fileoverview クライアントサイドの動的処理.
+ * @author pollseed
+ */
+
 "use strict";
 
 const SOCKET = io();
@@ -5,23 +10,33 @@ const SOCKET = io();
 SOCKET.on("sendMyMsg", data => {
   let session = JSON.parse(sessionStorage.getItem('data')),
       result = document.getElementById("result");
+
+  // セッション情報が存在していれば、結果を合体させておく
+  // ブラウザバックした時にその合体した全ての結果を表示させるため
   if (session !== null && session.result !== undefined) {
     data.result = session.result + data.result;
   }
+
+  // セッション情報を格納
   sessionStorage.setItem('data', JSON.stringify(data));
   appendResult(data.result);
 });
 
 (function() {
   let session = JSON.parse(sessionStorage.getItem('data'));
+
+  // ブラウザバック、レンダリング時等対応
   if (session !== null) {
     appendResult(session.result);
   }
 }());
 
+/**
+ * DOMに結果を埋め込む.
+ * @param {string} urls LINKのカンマ区切り文字列
+ */
 function appendResult(urls) {
   let result = document.getElementById("result"),
-      div = document.createElement("div"),
       li, a;
   urls.split(",").forEach(v => {
     li = document.createElement("li");
@@ -29,28 +44,37 @@ function appendResult(urls) {
     a.innerHTML = v;
     a.href = v;
     li.appendChild(a);
-    div.appendChild(li);
+    result.appendChild(li);
   });
-  div.setAttribute('class', 'li_result');
-  result.appendChild(div);
 }
 
+/**
+ * サーバに指定入力した値を送る.
+ *
+ * @return エラーがあれば {@code false} を返す.
+ */
 function message_main() {
   let $msg = $("#message").val(),
-      $tech = $("#select_tech").val(),
-      result = document.getElementById("result");
+      $tech = $("#select_tech").val();
   if (errorHandlingDone($msg, $tech)) return false;
-  result.innerHTML = '';
-  sessionStorage.removeItem('data');
+  clearResult();
   $("#message").val("");
   SOCKET.emit("sendMessageToServer", { msg: $msg, tech: $tech });
+}
+
+/**
+ * 結果を消し込む.(セッション情報も消す)
+ */
+function clearResult() {
+  let result = document.getElementById("result");
+  result.innerHTML = '';
+  sessionStorage.removeItem('data');
 }
 
 function click() {
   let el = document.getElementById("send");
   el.addEventListener('click', message_main, false);
 }
-
 document.addEventListener('DOMContentLoaded', click, false);
 
 /**
