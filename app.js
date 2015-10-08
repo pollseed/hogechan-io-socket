@@ -1,18 +1,19 @@
-const CRYPTO_KEY = 'sha1',
-      DIGEST_KEY = 'base64',
+const
+      // CRYPTO_KEY = 'sha1',
+      // DIGEST_KEY = 'base64',
       HTTP = require('http'),
       SOCKET_IO = require('socket.io'),
-      CRYPTO = require('crypto'),
-      LOGGER = require('log4js').getLogger('request'),
-      SETTINGS = require('./settings'),
+      // CRYPTO = require('crypto'),
+      LOGGER = require('log4js').getLogger('request'), SETTINGS = require('./settings'),
       PORT = process.env.PORT || SETTINGS.port,
       REQUEST = require('request'),
       UTIL = require('util'),
-      FS = require('fs'),
-      ZLIB = require('zlib'),
+      // FS = require('fs'),
+      // ZLIB = require('zlib'),
       TECH_MAP = new Map()
         .set("1", ["https://api.github.com/search/repositories?q=%s", "https://api.github.com/search/issues?q=%s"])
-        .set("2", "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=%s%204.0&site=stackoverflow");
+        // .set("2", "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=%s%204.0&site=stackoverflow")
+        ;
 
 var express = require('express'),
     session = require('express-session'),
@@ -76,6 +77,7 @@ io.on('connection', socket => {
       // techが複数選択された
       LOGGER.info("全実行します。");
       // TODO 全実行する
+      // v0.4以降
 
     } else {
       tech_info.options_array.forEach(v => {
@@ -112,13 +114,14 @@ function createContent(options, body) {
     return urls.toString();
   } else if (options.url.indexOf('stackexchange') >= 0) {
     // FIXME gunzip系の処理でバグ発生
+    // v0.5以降
     ;
     return false;
     // var gunzip = ZLIB.Gunzip(body);
     // content = gunzip.decompress();
-    ZLIB.gunzip(deflated, (err, binary) => {
-      content = binary;
-    });
+    // ZLIB.gunzip(deflated, (err, binary) => {
+      // content = binary;
+    // });
     JSON.parse(body).items.forEach(item => { urls.push(item.link) });
   } else {
     // cannot go here.
