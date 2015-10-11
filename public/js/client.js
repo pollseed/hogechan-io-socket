@@ -36,9 +36,12 @@ SOCKET.on("sendMyMsg", data => {
  * @param {string} urls LINKのカンマ区切り文字列
  */
 function appendResult(urls) {
-  let result = document.getElementById("result"),
+  let count = document.getElementById("count"),
+      result = document.getElementById("result"),
+      url_split = urls.split(","),
       li, a;
-  urls.split(",").forEach(v => {
+  count.innerHTML = urls !== "" ? url_split.length : 0;
+  url_split.forEach(v => {
     li = document.createElement("li");
     a = document.createElement("a");
     a.innerHTML = v;
