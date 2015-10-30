@@ -8,7 +8,7 @@
 Optimistic Search
 
 ## env
-* node.js v4.1.1
+* node.js v5.0.0
 * express v4.13.3
 * socket.io v1.3.6
 * log4js v0.6.26
